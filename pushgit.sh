@@ -9,6 +9,3 @@ git add .
 git commit -a -m "$commitStr"
 git push
 
-source env.sh
-cd src/applet/app/
-echo "finish!"
