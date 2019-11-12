@@ -5,9 +5,12 @@ mysql主从同步
 ##mysql主从配置
 主：
 1、修改配置
+修改auto.cnf：
+如果是容器，需先修改auto.cnf中server-uuid的尾号为ip最后一段号码
+修改my.cnf：
 cat >>/etc/mysql/my.cnf
-log-bin = log-bin 
 server-id =183
+log-bin = log-bin 
 innodb-file-per-table =ON
 skip_name_resolve=ON
 binlog_format=MIXED
@@ -16,7 +19,7 @@ sync_binlog=1  #开启binlog日志同步功能
 
 2、mysql客户端中添加主数据库的slave账号
 #主库
--- GRANT REPLICATION SLAVE ON *.* to 'slave236'@'172.18.171.236' identified by 'WCY7EWQBiKHDvFgHcFgeqqvA';#在主Mysql上建立slave236帐户并授权为Slave:
+-- GRANT REPLICATION SLAVE ON *.* to 'slave138'@'172.18.196.183' identified by 'WCY7EWQBiKHDvFgHcFgeqqvA';#在主Mysql上建立slave138帐户并授权为Slave:
 -- GRANT REPLICATION SLAVE ON *.* to 'slave245'@'172.18.171.245' identified by 'WCY7EWQBiKHDvFgHcFgeqqvA';#在主Mysql上建立slave245帐户并授权为Slave:
 -- flush privileges;
 
@@ -40,6 +43,9 @@ innodb_flush_log_at_trx_commit=2
 sync_binlog=1
 replicate-do-db=some_schema#要同步的数据库
 replicate-ignore-db=sys#不想同步的数据库
+replicate-ignore-db=performance_schema
+replicate-ignore-db=mysql
+replicate-ignore-db=lserver
 #read_only = ON
 
 2、导入主库的同步前数据
@@ -60,6 +66,10 @@ server-uuid=772a84e9-2e79-11e8-8548-00163e0a7独立尾号
 -- stop slave;
 -- #set global sql_slave_skip_counter =1;#从回放日志中跳过1个event再执行（常用于跳过一些错误事件）
 show slave status;#查看slave的当前状态
+
+
+
+
 
 
 
